@@ -1,3 +1,3 @@
 # MediaRecorder--JS
 
-[x] Uses to Record a Video and Audio via Web
+### Uses to Record a Video and Audio via Web
