@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <title>Video & Audio Recorder</title>
+   <title>Video & Audio Recorder Example by MrZ</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
    <style>
       body {
@@ -36,9 +36,9 @@
    </style>
 </head>
 <body>
-  <h1 style="color:blue"> Video-Audio recorder</h1>
+  <h1 style="color:blue"> Video-Audio recorder by MrZ</h1>
    <div class="display-none" id="vid-recorder">
-      <h3>Record Video </h3>
+      <h3>Video Recording </h3>
       <video autoplay id="vidBox"> </video>
       <button type="button" id="video_st" onclick="start_video_Recording()"> <i class="fa fa-play"></i></button>
       <button type="button" id="video_en" disabled onclick="stop_Recording(this, document.getElementById('video_st'))">
@@ -50,7 +50,7 @@
    <hr>
    <!-- ------------ -->
    <div class="display-none" id="audio_rec">
-      <h3> Record Audio</h3>
+      <h3> Audio Recording</h3>
       <button type="button" id="aud_st"
       onclick="start_audio_Recording()"><i class="fa fa-play"></i>
       </button>
@@ -58,14 +58,16 @@
       disabled onclick="stop_Recording(this, document.getElementById('aud_st'))"> <i class="fa fa-stop"></i></button>
    </div>
 <script>
-//----------------------Video-------------------------------------
+//----------------------Video-Recorder-------------------------------------
 function start_video_Recording() {
-   //To stores the recorded media
+   
+   //To stores or load recorded media
+
    let chunks = [];
    const startBtn=document.getElementById("video_st");
    const endBtn=document.getElementById("video_en");
    
-   // Access the camera and microphone
+   // Access the camera and microphone for recording permission.
    navigator.mediaDevices.getUserMedia({audio: true, video: true})
    .then((mediaStreamObj) => {
    
@@ -98,15 +100,15 @@ function start_video_Recording() {
       endBtn.disabled = false;
    });
 }
-//--------------------audio---------------------------------------
+//--------------------Audio-Recorder---------------------------------------
 
 function start_audio_Recording() {
-   //To stores the recorded media
+   //To stores or load the recorded media
    let chunksArr = [];
    const startBtn=document.getElementById("aud_st");
    const endBtn=document.getElementById("aud_en");
    
-   // Access the camera and microphone
+   // Access the camera and microphone for recording permission.
    navigator.mediaDevices.getUserMedia({audio: true, video: false})
    .then((mediaStream) => {
       const medRec = new MediaRecorder(mediaStream);
