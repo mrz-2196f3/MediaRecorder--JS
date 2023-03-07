@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Video & Audio Recorder</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <style>
+      body {
+         text-align: center;
+         color: red;
+         font-size: 1.2em;
+      }
+      //video start & end, Audio start & end button styling
+      #video_st, #video_en, #aud_st, #aud_en{
+         margin-top: 10px;
+         padding: 10px;
+         border-radius: 4px;
+         cursor: pointer;
+      }
+      #vidBox{
+         background-color: grey;
+      }
+      video {
+         background-color: gray;
+         display: block;
+         margin: 6px auto;
+         width: 420px;
+         height: 240px;
+      }
+      audio {
+         display: block;
+         margin: 6px auto;
+      }
+      a {
+         color: green;
+      }
+   </style>
+</head>
+<body>
+  <h1 style="color:blue"> Video-Audio recorder</h1>
+   <div class="display-none" id="vid-recorder">
+      <h3>Record Video </h3>
+      <video autoplay id="vidBox"> </video>
+      <button type="button" id="video_st" onclick="start_video_Recording()"> <i class="fa fa-play"></i></button>
+      <button type="button" id="video_en" disabled onclick="stop_Recording(this, document.getElementById('video_st'))">
+         <i class="fa fa-stop"></i>
+      </button>
+   </div>
+   <!-- ------------ -->
+   <br>
+   <hr>
+   <!-- ------------ -->
+   <div class="display-none" id="audio_rec">
+      <h3> Record Audio</h3>
+      <button type="button" id="aud_st"
+      onclick="start_audio_Recording()"><i class="fa fa-play"></i>
+      </button>
+      <button type="button" id="aud_en"
+      disabled onclick="stop_Recording(this, document.getElementById('aud_st'))"> <i class="fa fa-stop"></i></button>
+   </div>
+<script>
+//----------------------Video-------------------------------------
+function start_video_Recording() {
+   //To stores the recorded media
+   let chunks = [];
+   const startBtn=document.getElementById("video_st");
+   const endBtn=document.getElementById("video_en");
+   
+   // Access the camera and microphone
+   navigator.mediaDevices.getUserMedia({audio: true, video: true})
+   .then((mediaStreamObj) => {
+   
+      // Create a new MediaRecorder instance
+      const medRec =new MediaRecorder(mediaStreamObj);
+      window.mediaStream = mediaStreamObj;
+      window.mediaRecorder = medRec;
+      medRec.start();
+      
+      //when recorded data is available then push into chunkArr array
+      medRec.ondataavailable = (e) => {
+         chunks.push(e.data);
+      };
+      
+      //stop the video recording
+      medRec.onstop = () => {
+         const blobFile = new Blob(chunks, { type:"video/mp4" });chunks = [];
+      
+         // create video element and store the media which is recorded
+         const recMediaFile = document.createElement("video");
+         recMediaFile.controls = true;
+         const RecUrl = URL.createObjectURL(blobFile);
+         
+         //keep the recorded url as source
+         recMediaFile.src = RecUrl;
+         document.getElementById(`vid-recorder`).append(recMediaFile);
+      };
+      document.getElementById("vidBox").srcObject = mediaStreamObj;
+      startBtn.disabled = true;
+      endBtn.disabled = false;
+   });
+}
+//--------------------audio---------------------------------------
+
+function start_audio_Recording() {
+   //To stores the recorded media
+   let chunksArr = [];
+   const startBtn=document.getElementById("aud_st");
+   const endBtn=document.getElementById("aud_en");
+   
+   // Access the camera and microphone
+   navigator.mediaDevices.getUserMedia({audio: true, video: false})
+   .then((mediaStream) => {
+      const medRec = new MediaRecorder(mediaStream);
+      window.mediaStream = mediaStream;
+      window.mediaRecorder = medRec;
+      medRec.start();
+      
+   //when recorded data is available then push into chunkArr array
+   medRec.ondataavailable = (e) => {
+      chunksArr.push(e.data);
+   };
+   
+   //stop the audio recording
+      medRec.onstop = () => {
+         const blob = new Blob(chunksArr, {type: "audio/mpeg"});
+         chunksArr = [];
+         
+         // create audio element and store the media which is recorded
+         const recMediaFile = document.createElement("audio");
+         recMediaFile.controls = true;
+         const RecUrl = URL.createObjectURL(blob);
+         recMediaFile.src = RecUrl;
+         document.getElementById(`audio_rec`).append(
+         recMediaFile);
+      };
+      startBtn.disabled = true;
+      endBtn.disabled = false;
+   });
+}
+function stop_Recording(end, start) {
+   //stop all tracks
+   window.mediaRecorder.stop();
+   window.mediaStream.getTracks() .forEach((track) => {track.stop();});
+      //disable the stop button and enable the start button
+      end.disabled = true;
+      start.disabled = false;
+   }
+</script>
+</body>
+</html>
